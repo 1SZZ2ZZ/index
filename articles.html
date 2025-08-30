@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="浏览专业的游戏攻略、评测和分析文章，获取最新游戏资讯和技巧">
+    <title>文章列表 - 游戏玩家内容发布平台</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/auth.js"></script>
+    <script src="js/post.js"></script>
+    <script src="js/init-mock-data.js"></script>
+    <!-- 添加Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 添加Google字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 变量定义 */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            --background-light: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --background-dark: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --shadow-light: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --shadow-medium: 0 12px 30px rgba(0, 0, 0, 0.12);
+            --shadow-hover: 0 15px 35px rgba(74, 144, 226, 0.15);
+            --radius-small: 8px;
+            --radius-medium: 16px;
+            --radius-large: 30px;
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 40px;
+            --transition-fast: 0.3s ease;
+            --transition-slow: 0.5s ease;
+        }
+        
+        /* 文章页面特定的自定义样式 */
+        body {
+            font-family: 'Inter', 'Microsoft YaHei', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+        
+        /* 导航栏增强 */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            position: relative;
+            transition: all var(--transition-fast);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-small);
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(74, 144, 226, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .nav-item.active {
+            background-color: rgba(74, 144, 226, 0.1);
+            font-weight: 600;
+            color: #4a90e2 !important;
+        }
+        
+        /* 文章卡片样式增强 */
+        .article-card {
+            position: relative;
+            border-radius: var(--radius-medium);
+            overflow: hidden;
+            background: white;
+            box-shadow: var(--shadow-light);
+            transition: all var(--transition-slow);
+            cursor: pointer;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .article-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: var(--primary-gradient);
+            transition: height var(--transition-fast);
+        }
+        
+        .article-card:hover::before {
+            height: 100%;
+        }
+        
+        .article-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .article-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+        
+        .article-card:hover .article-image img {
+            transform: scale(1.1);
+        }
+        
+        .article-info {
+            padding: var(--spacing-md);
+        }
+        
+        .article-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.3;
+            margin: 0 0 var(--spacing-sm) 0;
+            transition: all var(--transition-fast);
+        }
+        
+        .article-card:hover .article-title {
+            color: #4a90e2;
+            letter-spacing: 0.3px;
+        }
+        
+        .article-excerpt {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+            margin: 0 0 var(--spacing-md) 0;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+        
+        .article-card:hover .article-excerpt {
+            color: #475569;
+        }
+        
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            transition: transform var(--transition-fast);
+        }
+        
+        .article-card:hover .user-avatar {
+            transform: scale(1.05);
+        }
+        
+        .username {
+            color: #4a4a4a;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .article-stats {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center;
+        }
+        
+        .article-stats span {
+            color: #4a4a4a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color var(--transition-fast);
+        }
+        
+        .article-stats span i {
+            font-size: 18px;
+        }
+        
+        .article-card:hover .article-stats span {
+            color: #475569;
+        }
+        
+        /* 美化分类标签 */
+        .article-category {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white !important;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        
+        /* 文章加载动画 */
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        
+        .skeleton-loading {
+            position: relative;
+            overflow: hidden;
+            background-color: #e2e8f0;
+            border-radius: var(--radius-medium);
+        }
+        
+        .skeleton-loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0,
+                rgba(255, 255, 255, 0.2) 20%,
+                rgba(255, 255, 255, 0.5) 60%,
+                rgba(255, 255, 255, 0)
+            );
+            animation: shimmer 1.5s infinite;
+        }
+        
+        /* 滚动到顶部按钮 */
+        #scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--secondary-gradient);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+            transition: all var(--transition-fast);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 9999;
+        }
+        
+        #scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+        }
+        
+        /* 删除按钮样式 */
+        .delete-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-size: 14px;
+        }
+        
+        .delete-btn:hover {
+            background-color: #dc2626;
+            transform: scale(1.1);
+        }
+        
+        /* 无内容状态 */
+        .no-content {
+            text-align: center;
+            padding: 80px 20px;
+            grid-column: 1 / -1;
+            background: var(--background-light);
+            border-radius: var(--radius-medium);
+            box-shadow: var(--shadow-light);
+        }
+        
+        .no-content h3 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #64748b;
+            margin: 0 0 15px 0;
+        }
+        
+        .no-content p {
+            color: #94a3b8;
+            margin: 0 0 30px 0;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            background: var(--secondary-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: var(--radius-large);
+            font-size: 16px;
+            font-weight: 600;
+            transition: all var(--transition-fast);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+        }
+        
+        /* 文章网格布局优化 */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        /* 页脚样式增强 */
+        .footer {
+            background: var(--background-dark);
+            padding: 50px 0;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: 50px;
+        }
+        
+        .footer-info h4,
+        .footer-links h4,
+        .footer-social h4 {
+            font-size: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 15px;
+            color: white;
+        }
+        
+        .footer-divider {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--secondary-gradient);
+            border-radius: 3px;
+        }
+        
+        .footer-info p {
+            color: #cbd5e1;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+        
+        .footer-links a,
+        .footer-social a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #cbd5e1;
+            text-decoration: none;
+            margin-bottom: 15px;
+            transition: all var(--transition-fast);
+        }
+        
+        .footer-links a:hover,
+        .footer-social a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #334155;
+        }
+        
+        .footer-bottom p {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .articles-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-md);
+            }
+            
+            .filters {
+                flex-direction: column;
+                gap: var(--spacing-sm) !important;
+            }
+            
+            .footer-content {
+                gap: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="index.html" style="text-decoration: none; color: #1a1a1a; font-weight: 700; font-size: 28px;">🎮 游戏玩家平台</a></h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #1a1a1a; font-weight: 600; font-size: 16px; position: relative; padding: 12px 20px; transition: all 0.3s ease;">
+                    <i class="fas fa-home" style="font-size: 18px;"></i> 首页
+                </a>
+                <a href="posts.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #1a1a1a; font-weight: 600; font-size: 16px; position: relative; padding: 12px 20px; transition: all 0.3s ease;">
+                    <i class="fas fa-comment-alt" style="font-size: 18px;"></i> 帖子
+                </a>
+                <a href="articles.html" class="active" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #4a90e2; font-weight: 700; font-size: 16px; position: relative; padding: 12px 20px; transition: all 0.3s ease;">
+                    <i class="fas fa-book" style="font-size: 18px;"></i> 文章
+                    <span style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 30px; height: 3px; background: linear-gradient(90deg, #4a90e2 0%, #50e3c2 100%); border-radius: 3px;"></span>
+                </a>
+                <a href="create-post.html" id="create-post-btn" class="create-btn" style="display: flex; align-items: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); color: white; padding: 12px 24px; border-radius: 25px; font-weight: 700; font-size: 16px; transition: all 0.3s ease;">
+                    <i class="fas fa-plus" style="font-size: 16px;"></i> 发布内容
+                </a>
+                <a href="login.html" id="login-btn" style="display: flex; align-items: center; gap: 8px; text-decoration: none; background: transparent; border: 2px solid #4a90e2; color: #4a90e2; padding: 12px 24px; border-radius: 25px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.3s ease; margin-right: 10px;">
+                    <i class="fas fa-sign-in-alt" style="font-size: 16px;"></i> 登录
+                </a>
+                <a href="register.html" id="register-btn" style="display: flex; align-items: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); color: white; padding: 12px 24px; border-radius: 25px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.3s ease; border: none;">
+                    <i class="fas fa-user-plus" style="font-size: 16px;"></i> 注册
+                </a>
+                <div id="user-profile" class="hidden" style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; border: 2px solid #4a90e2;">
+                            <img id="navbar-avatar" src="" alt="用户头像" style="width: 100%; height: 100%; object-fit: cover;">
+                            <i class="fas fa-user" style="color: #4a90e2; font-size: 20px;"></i>
+                        </div>
+                        <span id="username-display" style="color: #1a1a1a; font-weight: 700; font-size: 16px;"></span>
+                    </div>
+                    <button id="logout-btn" onclick="handleLogout()" style="background: #ef4444; color: white; padding: 10px 20px; border-radius: 20px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; border: none;">
+                        <i class="fas fa-sign-out-alt" style="font-size: 16px;"></i> 退出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面标题和筛选器 -->
+    <section class="page-header" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 80px 0 60px;">
+        <div class="container">
+            <div class="header-content" style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <h2 style="font-size: 42px; margin-bottom: 20px; color: #2c3e50; font-weight: 700; letter-spacing: -0.5px;">
+                    <i class="fas fa-book"></i> 游戏文章
+                </h2>
+                <p style="font-size: 18px; margin-bottom: 40px; color: #5a6c7d; line-height: 1.6;">
+                    浏览专业的游戏攻略、评测和分析文章，提升你的游戏技能和知识
+                </p>
+                
+                <div class="filters" style="display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; background-color: white; padding: 20px 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);">
+                    <div style="position: relative;">
+                        <i class="fas fa-filter" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666;"></i>
+                        <select id="category-filter" style="padding: 12px 45px 12px 40px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; background-color: white; cursor: pointer; transition: all 0.3s ease;">
+                            <option value="">所有分类</option>
+                            <option value="游戏资讯">游戏资讯</option>
+                            <option value="攻略技巧">攻略技巧</option>
+                            <option value="评测分析">评测分析</option>
+                            <option value="硬件设备">硬件设备</option>
+                            <option value="行业动态">行业动态</option>
+                        </select>
+                    </div>
+                    
+                    <div style="position: relative;">
+                        <i class="fas fa-sort" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666;"></i>
+                        <select id="sort-filter" style="padding: 12px 45px 12px 40px; border: 2px solid #e1e5e9; border-radius: 8px; font-size: 16px; background-color: white; cursor: pointer; transition: all 0.3s ease;">
+                            <option value="newest">最新发布</option>
+                            <option value="popular">最受欢迎</option>
+                            <option value="views">最多浏览</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 文章列表 -->
+    <section class="articles-section" style="padding: 80px 0;">
+        <div class="container">
+            <div id="articles-container" class="articles-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 40px;">
+                <!-- 文章将通过 JavaScript 动态加载 -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- 滚动到顶部按钮 -->
+    <div id="scroll-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+        <div class="container">
+            <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px; margin-bottom: 50px;">
+                <div class="footer-info">
+                    <h4 style="font-size: 20px; margin-bottom: 25px; position: relative; padding-bottom: 15px; color: white;">
+                        <i class="fas fa-gamepad" style="color: #4a90e2; margin-right: 10px;"></i>关于我们
+                    </h4>
+                    <h4 style="position: relative;">
+                        <span class="footer-divider"></span>
+                    </h4>
+                    <p style="color: #cbd5e1; line-height: 1.7; font-size: 16px;">游戏玩家内容发布平台，连接全球游戏爱好者，分享游戏攻略、评测和最新资讯。</p>
+                </div>
+                <div class="footer-links">
+                    <h4 style="font-size: 20px; margin-bottom: 25px; position: relative; padding-bottom: 15px; color: white;">
+                        <i class="fas fa-link" style="color: #4a90e2; margin-right: 10px;"></i>快速链接
+                    </h4>
+                    <h4 style="position: relative;">
+                        <span class="footer-divider"></span>
+                    </h4>
+                    <a href="index.html" style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease;">
+                        <i class="fas fa-home" style="color: #4a90e2;"></i>首页
+                    </a>
+                    <a href="posts.html" style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease;">
+                        <i class="fas fa-comment-alt" style="color: #4a90e2;"></i>帖子
+                    </a>
+                    <a href="articles.html" style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease;">
+                        <i class="fas fa-book" style="color: #4a90e2;"></i>文章
+                    </a>
+                    <a href="#" style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease;">
+                        <i class="fas fa-envelope" style="color: #4a90e2;"></i>联系我们
+                    </a>
+                </div>
+                <div class="footer-social">
+                    <h4 style="font-size: 20px; margin-bottom: 25px; position: relative; padding-bottom: 15px; color: white;">
+                        <i class="fas fa-share-alt" style="color: #4a90e2; margin-right: 10px;"></i>关注我们
+                    </h4>
+                    <h4 style="position: relative;">
+                        <span class="footer-divider"></span>
+                    </h4>
+                    <a href="#" class="social-link" style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease;">
+                        <i class="fab fa-weibo" style="color: #e6162d; font-size: 18px;"></i>微博
+                    </a>
+                    <a href="#" class="social-link" style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease;">
+                        <i class="fab fa-weixin" style="color: #07c160; font-size: 18px;"></i>微信
+                    </a>
+                    <a href="#" class="social-link" style="display: flex; align-items: center; gap: 10px; color: #cbd5e1; text-decoration: none; margin-bottom: 15px; transition: all 0.3s ease;">
+                        <i class="fab fa-discord" style="color: #7289da; font-size: 18px;"></i>Discord
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom" style="text-align: center; padding-top: 30px; border-top: 1px solid #334155;">
+                <p style="color: #cbd5e1; font-size: 14px;">&copy; 2023 游戏玩家内容发布平台. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 添加加载动画的样式
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { opacity: 0.6; }
+                50% { opacity: 0.4; }
+                100% { opacity: 0.6; }
+            }
+            
+            .skeleton-loading {
+                background-color: #e5e7eb;
+                border-radius: 4px;
+                animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            }
+            
+            .article-card {
+                transition: all 0.3s ease;
+            }
+            
+            .article-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            }
+            
+            .to-top-btn {
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                background-color: #4a90e2;
+                color: white;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+            }
+            
+            .to-top-btn.visible {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .to-top-btn:hover {
+                background-color: #357abd;
+                transform: translateY(-3px);
+            }
+            
+            .btn-primary, .delete-btn {
+                transition: all 0.3s ease;
+            }
+            
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+            }
+            
+            .btn-primary:active {
+                transform: translateY(0);
+            }
+            
+            .delete-btn:hover {
+                color: #dc2626;
+                transform: scale(1.1);
+            }
+            
+            .article-image img {
+                transition: transform 0.5s ease;
+            }
+            
+            .article-card:hover .article-image img {
+                transform: scale(1.05);
+            }
+            
+            .article-category {
+                transition: all 0.3s ease;
+            }
+            
+            .article-card:hover .article-category {
+                background-color: #4a90e2;
+                color: white;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // 用户状态管理
+        function updateAuthUI(isLoggedIn) {
+            if (isLoggedIn) {
+                updateUILoggedIn();
+            } else {
+                updateUILoggedOut();
+            }
+        }
+
+        // 复用 auth.js 中的 handleLogout 函数，不需要在这里重复定义
+
+        // 生成骨架屏
+        function generateSkeletonCards(count) {
+            const articlesContainer = document.getElementById('articles-container');
+            articlesContainer.innerHTML = '';
+            
+            for (let i = 0; i < count; i++) {
+                const skeletonCard = document.createElement('div');
+                skeletonCard.className = 'article-card skeleton-loading';
+                skeletonCard.style.height = '380px';
+                
+                skeletonCard.innerHTML = `
+                    <div class="article-image skeleton-loading" style="height: 200px;"></div>
+                    <div class="article-info" style="padding: 24px;">
+                        <div class="skeleton-loading" style="width: 120px; height: 28px; border-radius: 20px; margin-bottom: 16px;"></div>
+                        <div class="skeleton-loading" style="width: 100%; height: 28px; border-radius: 4px; margin-bottom: 16px;"></div>
+                        <div class="skeleton-loading" style="width: 100%; height: 20px; border-radius: 4px; margin-bottom: 8px;"></div>
+                        <div class="skeleton-loading" style="width: 80%; height: 20px; border-radius: 4px; margin-bottom: 20px;"></div>
+                        <div class="article-meta" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="user-info" style="display: flex; align-items: center; gap: 10px;">
+                                <div class="user-avatar skeleton-loading" style="width: 36px; height: 36px; border-radius: 50%;"></div>
+                                <div class="skeleton-loading" style="width: 80px; height: 20px; border-radius: 4px;"></div>
+                            </div>
+                            <div class="article-stats" style="display: flex; gap: 15px;">
+                                <div class="skeleton-loading" style="width: 40px; height: 20px; border-radius: 4px;"></div>
+                                <div class="skeleton-loading" style="width: 40px; height: 20px; border-radius: 4px;"></div>
+                                <div class="skeleton-loading" style="width: 40px; height: 20px; border-radius: 4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                articlesContainer.appendChild(skeletonCard);
+            }
+        }
+        
+        // 加载文章
+        function loadArticles() {
+            // 先显示骨架屏
+            generateSkeletonCards(6);
+            
+            // 模拟网络延迟
+            setTimeout(() => {
+                const category = document.getElementById('category-filter').value;
+                const sortBy = document.getElementById('sort-filter').value;
+                const articlesContainer = document.getElementById('articles-container');
+                
+                // 获取文章数据
+                const localStorageData = JSON.parse(localStorage.getItem('posts')) || {};
+                const posts = localStorageData.posts || [];
+                
+                // 筛选文章（contentType为'article'）
+                let filteredArticles = posts.filter(post => post.contentType === 'article');
+                
+                if (category) {
+                    filteredArticles = filteredArticles.filter(article => article.category === category);
+                }
+                
+                if (sortBy === 'newest') {
+                    filteredArticles.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                } else if (sortBy === 'popular') {
+                    filteredArticles.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+                } else if (sortBy === 'views') {
+                    filteredArticles.sort((a, b) => (b.views || 0) - (a.views || 0));
+                }
+                
+                // 清空容器
+                articlesContainer.innerHTML = '';
+                
+                if (filteredArticles.length === 0) {
+                    articlesContainer.innerHTML = `
+                        <div class="no-content" style="text-align: center; padding: 80px 20px; grid-column: 1 / -1;">
+                            <div style="font-size: 96px; margin-bottom: 24px; color: #4a90e2;">📚</div>
+                            <h3 style="font-size: 28px; color: #333; margin-bottom: 16px; font-weight: 700;">暂无文章内容</h3>
+                            <p style="color: #666; margin-bottom: 36px; font-size: 16px; font-weight: 500;">还没有人发布文章，快来成为第一个发布者吧！</p>
+                            <a href="create-post.html" class="btn-primary" style="display: inline-block; background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); color: #ff3b30; text-decoration: none; padding: 16px 40px; border-radius: 30px; font-size: 18px; font-weight: 700; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4); border: 2px solid #5aa3f0; min-width: 200px;">
+                                <i class="fas fa-pen" style="font-size: 20px; margin-right: 8px;"></i> 发布文章
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // 添加文章卡片
+                filteredArticles.forEach(article => {
+                    const articleElement = document.createElement('div');
+                    articleElement.className = 'article-card';
+                    articleElement.style.position = 'relative';
+                    
+                    // 检查当前用户是否是文章作者
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+                    const isAuthor = currentUser.id === article.author.id;
+                    
+                    // 生成文章缩略图
+                    const excerpt = article.content.length > 150 ? article.content.substring(0, 150) + '...' : article.content;
+                    const bgColor = getRandomColor();
+                    const textColor = getContrastColor(bgColor);
+                    
+                    articleElement.innerHTML = `
+                        <div class="article-image">
+                            <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='200' viewBox='0 0 400 200'><rect width='400' height='200' fill='${encodeURIComponent(bgColor)}'/><text x='200' y='100' font-size='20' text-anchor='middle' fill='${encodeURIComponent(textColor)}'>${article.category}</text></svg>" alt="${article.title}" loading="lazy">
+                            <!-- 悬浮效果覆盖层 -->
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.3s ease; display: flex; justify-content: center; align-items: center;">
+                                <div style="transform: translateY(20px); transition: transform 0.3s ease;">
+                                    <span style="color: white; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                                        <i class="fas fa-external-link-alt"></i> 查看详情
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="article-info">
+                            <span class="article-category">${article.category}</span>
+                            <h3 class="article-title">${article.title}</h3>
+                            <p class="article-excerpt">${excerpt}</p>
+                            <div class="article-meta">
+                                <div class="user-info">
+                                    <div class="user-avatar">
+                                        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='${encodeURIComponent(bgColor)}'/><circle cx='50' cy='40' r='10' fill='white'/><path d='M30,70 Q50,85 70,70' fill='white'/></svg>" alt="${article.author.username}">
+                                    </div>
+                                    <span class="username">${article.author.username}</span>
+                                </div>
+                                <div class="article-stats">
+                                    <span><i class="fas fa-eye"></i> ${article.views || 0}</span>
+                                    <span><i class="fas fa-thumbs-up"></i> ${article.likes || 0}</span>
+                                    <span><i class="fas fa-comment"></i> ${(article.comments || []).length}</span>
+                                    ${isAuthor ? `<button class="delete-btn" onclick="event.stopPropagation(); handleDeleteArticle('${article.id}')" title="删除文章"><i class="fas fa-trash-alt"></i></button>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // 为图片覆盖层添加鼠标悬浮效果
+                    const imageOverlay = articleElement.querySelector('.article-image div');
+                    if (imageOverlay) {
+                        articleElement.addEventListener('mouseenter', function() {
+                            imageOverlay.style.opacity = '1';
+                            imageOverlay.querySelector('div').style.transform = 'translateY(0)';
+                        });
+                        
+                        articleElement.addEventListener('mouseleave', function() {
+                            imageOverlay.style.opacity = '0';
+                            imageOverlay.querySelector('div').style.transform = 'translateY(20px)';
+                        });
+                    }
+                
+                // 点击卡片跳转到文章详情
+                articleElement.addEventListener('click', function() {
+                    window.location.href = `article-detail.html?id=${article.id}`;
+                });
+                
+                // 添加淡入动画
+                articleElement.style.opacity = '0';
+                articleElement.style.transform = 'translateY(20px)';
+                articleElement.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                
+                articlesContainer.appendChild(articleElement);
+                
+                // 触发动画
+                setTimeout(() => {
+                    articleElement.style.opacity = '1';
+                    articleElement.style.transform = 'translateY(0)';
+                }, 100 * filteredArticles.indexOf(article));
+            });
+        }, 800); // 模拟加载时间
+        }
+
+        // 删除文章
+        function handleDeleteArticle(articleId) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+            
+            // 检查用户是否登录
+            if (!currentUser.id) {
+                alert('请先登录才能删除文章');
+                return;
+            }
+            
+            // 获取所有帖子数据
+            const localStorageData = JSON.parse(localStorage.getItem('posts')) || {};
+            const posts = localStorageData.posts || [];
+            const articleIndex = posts.findIndex(p => p.id === articleId);
+            
+            // 检查文章是否存在
+            if (articleIndex === -1) {
+                alert('文章不存在');
+                return;
+            }
+            
+            const article = posts[articleIndex];
+            
+            // 检查用户是否有权限删除
+            if (article.author.id !== currentUser.id) {
+                alert('您只能删除自己发布的文章');
+                return;
+            }
+            
+            // 确认删除
+            if (!confirm('确定要删除这篇文章吗？此操作不可撤销。')) {
+                return;
+            }
+            
+            // 执行删除
+            posts.splice(articleIndex, 1);
+            localStorage.setItem('posts', JSON.stringify({ posts: posts }));
+            
+            // 显示成功消息并重新加载文章列表
+            alert('文章删除成功');
+            loadArticles();
+        }
+
+        // 显示骨架屏加载动画
+        function showSkeletonScreens() {
+            const skeletonElements = document.querySelectorAll('.skeleton-loading');
+            skeletonElements.forEach(el => {
+                el.style.display = 'block';
+            });
+        }
+
+        // 隐藏骨架屏加载动画
+        function hideSkeletonScreens() {
+            const skeletonElements = document.querySelectorAll('.skeleton-loading');
+            skeletonElements.forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+
+        // 初始化滚动到顶部按钮
+        function initScrollToTopButton() {
+            // 创建滚动到顶部按钮
+            let toTopButton = document.createElement('button');
+            toTopButton.className = 'to-top-btn';
+            toTopButton.innerHTML = '<i class="fas fa-arrow-up"></i>';
+            toTopButton.setAttribute('aria-label', '回到顶部');
+            document.body.appendChild(toTopButton);
+
+            // 监听滚动事件
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    toTopButton.classList.add('visible');
+                } else {
+                    toTopButton.classList.remove('visible');
+                }
+            });
+
+            // 添加点击事件
+            toTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+
+        // 增强按钮交互效果
+        function enhanceButtonInteractions() {
+            const buttons = document.querySelectorAll('button, .btn-primary, .btn-secondary');
+            buttons.forEach(button => {
+                // 添加点击时的缩放效果
+                button.addEventListener('mousedown', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                button.addEventListener('mouseup', function() {
+                    this.style.transform = 'scale(1)';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        }
+
+        // 检查用户登录状态并初始化事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查用户登录状态并更新currentUser变量
+            if (typeof checkUserLogin === 'function') {
+                checkUserLogin();
+            } else {
+                const currentUser = localStorage.getItem('currentUser');
+                updateAuthUI(!!currentUser);
+            }
+            initEventListeners();
+            
+            // 确保导航栏显示正确的登录状态
+            if (typeof updateNavDisplay === 'function') {
+                updateNavDisplay();
+            }
+            
+            // 加载文章
+            loadArticles();
+            
+            // 为筛选器添加事件监听
+            document.getElementById('category-filter').addEventListener('change', loadArticles);
+            document.getElementById('sort-filter').addEventListener('change', loadArticles);
+            
+            // 初始化滚动到顶部按钮
+            initScrollToTopButton();
+            
+            // 增强按钮交互效果
+            enhanceButtonInteractions();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布帖子 - 游戏玩家内容发布平台</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/auth.js"></script>
+    <script src="js/post.js"></script>
+    <script src="js/init-mock-data.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="index.html" style="text-decoration: none; color: #3a3a3a;">🎮 游戏玩家平台</a></h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">🏠 首页</a>
+                <a href="#" id="posts-link">📝 帖子</a>
+                <a href="#" id="articles-link">📄 文章</a>
+                <a href="login.html" id="login-nav">🔐 登录</a>
+                <a href="register.html" id="register-nav">📋 注册</a>
+                <div id="user-profile" style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; border: 2px solid #4a90e2;">
+                            <img id="navbar-avatar" src="" alt="用户头像" style="width: 100%; height: 100%; object-fit: cover;">
+                            <i class="fas fa-user" style="color: #4a90e2; font-size: 20px;"></i>
+                        </div>
+                        <span id="username-display" style="color: #1a1a1a; font-weight: 700; font-size: 16px;"></span>
+                    </div>
+                    <button id="logout-btn" style="background: #ff4757; color: #ffffff; border: 0; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: 600;">
+                        退出登录
+                    </button>
+                </div>
+                <a href="#" id="logout-nav" style="display: none;">🚪 退出</a>
+                <a href="create-post.html" class="active">📝 发布帖子</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 发布内容表单 -->
+    <div class="form-container">
+        <div class="form-card">
+            <h2 class="form-title">📝 发布新内容</h2>
+            <form id="createPostForm">
+                <div class="form-group">
+                    <label for="content-type">内容类型</label>
+                    <select id="content-type" required>
+                        <option value="post">帖子</option>
+                        <option value="article">文章</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="post-title">标题</label>
+                    <input type="text" id="post-title" placeholder="请输入内容标题" required>
+                </div>
+                <div class="form-group">
+                    <label for="post-category">分类</label>
+                    <select id="post-category" required>
+                        <option value="">请选择分类</option>
+                        <option value="news">游戏资讯</option>
+                        <option value="guides">攻略技巧</option>
+                        <option value="discussion">讨论交流</option>
+                        <option value="reviews">游戏评测</option>
+                        <option value="media">截图视频</option>
+                        <option value="other">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="post-content">内容</label>
+                    <textarea id="post-content" rows="10" placeholder="请输入帖子内容" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="post-tags">标签</label>
+                    <input type="text" id="post-tags" placeholder="请输入标签，用逗号分隔，最多5个">
+                    <div class="form-note">标签有助于其他玩家更容易找到您的内容</div>
+                </div>
+                <div class="form-group">
+                    <label for="post-links">相关链接</label>
+                    <input type="text" id="post-links" placeholder="请输入相关链接（可选）">
+                    <div class="form-note">可以添加游戏官网、视频链接、攻略链接等</div>
+                </div>
+                <button type="submit" class="form-button">🚀 发布内容</button>
+                <button type="button" id="cancel-btn" class="form-button-secondary">↩️ 取消</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4>🏢 关于我们</h4>
+                    <p>🎮 游戏玩家内容发布平台，连接全球游戏爱好者</p>
+                </div>
+                <div class="footer-links">
+                    <h4>🔗 快速链接</h4>
+                    <a href="index.html">🏠 首页</a>
+                    <a href="#">📝 帖子</a>
+                    <a href="#">📄 文章</a>
+                    <a href="#">📞 联系我们</a>
+                </div>
+                <div class="footer-social">
+                    <h4>👀 关注我们</h4>
+                    <a href="#" class="social-link">📱 微博</a>
+                    <a href="#" class="social-link">💬 微信</a>
+                    <a href="#" class="social-link">🎮 Discord</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 游戏玩家内容发布平台. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 等待DOM加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查用户登录状态
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('请先登录才能发布帖子');
+                window.location.href = 'login.html';
+            } else {
+                // 更新导航栏显示
+                updateNavDisplay();
+            }
+
+            // 为帖子和文章链接添加点击事件
+            document.getElementById('posts-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'posts.html';
+            });
+            
+            document.getElementById('articles-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'articles.html';
+            });
+
+            // 取消按钮事件
+            document.getElementById('cancel-btn').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+
+            // 初始化创建帖子表单
+            initCreatePostForm();
+        });
+    </script>
+</body>
+</html>

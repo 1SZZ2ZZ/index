@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 游戏玩家内容发布平台</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/auth.js"></script>
+    <script src="js/init-mock-data.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="index.html" style="text-decoration: none; color: #3a3a3a;">游戏玩家平台</a></h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="#" id="posts-link">帖子</a>
+                <a href="#" id="articles-link">文章</a>
+                <a href="login.html">登录</a>
+                <a href="register.html" class="active">注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 注册表单 -->
+    <div class="form-container">
+        <div class="form-card">
+            <h2 class="form-title">创建账号</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="reg-username">用户名</label>
+                    <input type="text" id="reg-username" placeholder="请输入您的中文用户名" required>
+                    <div class="form-note">用户名只能包含中文，不能包含特殊符号或英文</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-email">网易邮箱</label>
+                    <input type="email" id="reg-email" placeholder="请输入您的网易邮箱" required>
+                    <div class="form-note">请使用网易邮箱注册，例如：username@163.com, username@126.com等</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-password">设置密码</label>
+                    <input type="password" id="reg-password" placeholder="请设置密码，至少8位" required>
+                    <div class="form-note">密码应包含字母和数字，长度至少8位</div>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">确认密码</label>
+                    <input type="password" id="confirm-password" placeholder="请再次输入密码" required>
+                </div>
+                <div class="form-checkbox">
+                    <input type="checkbox" id="agree-terms" required>
+                    <label for="agree-terms">我已阅读并同意<a href="#">用户协议</a>和<a href="#">隐私政策</a></label>
+                </div>
+                <button type="submit" class="form-button">注册</button>
+                <div class="form-link">
+                    <p>已有账号？<a href="login.html">立即登录</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4>关于我们</h4>
+                    <p>游戏玩家内容发布平台，连接全球游戏爱好者</p>
+                </div>
+                <div class="footer-links">
+                    <h4>快速链接</h4>
+                    <a href="index.html">首页</a>
+                    <a href="#">帖子</a>
+                    <a href="#">文章</a>
+                    <a href="#">联系我们</a>
+                </div>
+                <div class="footer-social">
+                    <h4>关注我们</h4>
+                    <a href="#" class="social-link">微博</a>
+                    <a href="#" class="social-link">微信</a>
+                    <a href="#" class="social-link">Discord</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 游戏玩家内容发布平台. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 等待DOM加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为帖子和文章链接添加点击事件
+            document.getElementById('posts-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('帖子功能即将上线');
+            });
+            
+            document.getElementById('articles-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('文章功能即将上线');
+            });
+        });
+    </script>
+</body>
+</html>

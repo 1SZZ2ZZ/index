@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帖子详情 - 游戏玩家内容发布平台</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/post-detail.css">
+    <script src="js/auth.js"></script>
+    <script src="js/post.js"></script>
+    <script src="js/init-mock-data.js"></script>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="index.html" style="text-decoration: none; color: #3a3a3a;">游戏玩家平台</a></h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="posts.html">帖子</a>
+                <a href="#" id="articles-link">文章</a>
+                <a href="login.html" id="login-nav">登录</a>
+                <a href="register.html" id="register-nav">注册</a>
+                <div id="user-profile" style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; border: 2px solid #4a90e2;">
+                            <img id="navbar-avatar" src="" alt="用户头像" style="width: 100%; height: 100%; object-fit: cover;">
+                            <i class="fas fa-user" style="color: #4a90e2; font-size: 20px;"></i>
+                        </div>
+                        <span id="username-display" style="color: #1a1a1a; font-weight: 700; font-size: 16px;"></span>
+                    </div>
+                    <button id="logout-btn" style="background: #ff4757; color: #ffffff; border: 0; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: 600;">
+                        退出登录
+                    </button>
+                </div>
+                <a href="#" id="logout-nav" style="display: none;">退出</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 帖子详情区域 -->
+    <section class="post-detail-section">
+        <div class="container">
+            <div class="post-detail-header">
+                <span class="post-category" id="post-category"></span>
+                <h1 id="post-title"></h1>
+                <div class="post-meta">
+                    <div class="post-author">
+                        <div class="user-avatar" id="author-avatar"></div>
+                        <span id="author-name"></span>
+                    </div>
+                    <div class="post-stats">
+                        <span><i>👁</i> <span id="post-views">0</span></span>
+                        <span><i>👍</i> <span id="post-likes">0</span></span>
+                        <span><i>💬</i> <span id="post-comments-count">0</span></span>
+                    </div>
+                    <div class="post-date" id="post-date"></div>
+                </div>
+            </div>
+
+            <div class="post-content" id="post-content">
+                <!-- 帖子内容将在这里显示 -->
+            </div>
+
+            <!-- 点赞和操作区域 -->
+            <div class="post-actions">
+                <button id="like-btn" class="action-btn">
+                    <i>👍</i> 点赞
+                </button>
+                <button id="share-btn" class="action-btn">
+                    <i>📤</i> 分享
+                </button>
+            </div>
+
+            <!-- 评论区域 -->
+            <div class="comments-section">
+                <h3>评论</h3>
+                
+                <!-- 评论表单 -->
+                <div class="comment-form" id="comment-form">
+                    <textarea id="comment-content" placeholder="写下你的评论..." rows="3"></textarea>
+                    <button id="submit-comment" class="btn-primary">发布评论</button>
+                </div>
+
+                <!-- 评论列表 -->
+                <div class="comments-list" id="comments-list">
+                    <!-- 评论将通过 JavaScript 动态加载 -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4>关于我们</h4>
+                    <p>游戏玩家内容发布平台，连接全球游戏爱好者</p>
+                </div>
+                <div class="footer-links">
+                    <h4>快速链接</h4>
+                    <a href="index.html">首页</a>
+                    <a href="posts.html">帖子</a>
+                    <a href="#">文章</a>
+                    <a href="#">联系我们</a>
+                </div>
+                <div class="footer-social">
+                    <h4>关注我们</h4>
+                    <a href="#" class="social-link">微博</a>
+                    <a href="#" class="social-link">微信</a>
+                    <a href="#" class="social-link">Discord</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 游戏玩家内容发布平台. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 获取URL参数
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                id: params.get('id')
+            };
+        }
+
+        // 加载帖子详情
+        function loadPostDetail() {
+            const params = getUrlParams();
+            if (!params.id) {
+                alert('帖子ID无效');
+                window.location.href = 'posts.html';
+                return;
+            }
+
+            const localStorageData = JSON.parse(localStorage.getItem('posts')) || {};
+            const posts = localStorageData.posts || [];
+            const post = posts.find(p => p.id === params.id);
+
+            if (!post) {
+                alert('帖子不存在');
+                window.location.href = 'posts.html';
+                return;
+            }
+
+            // 更新帖子浏览量
+            post.views = (post.views || 0) + 1;
+            localStorage.setItem('posts', JSON.stringify({ posts: posts }));
+
+            // 显示帖子内容
+            document.getElementById('post-title').textContent = post.title;
+            document.getElementById('post-category').textContent = post.category;
+            document.getElementById('post-content').textContent = post.content;
+            document.getElementById('post-views').textContent = post.views || 0;
+            document.getElementById('post-likes').textContent = post.likes || 0;
+            document.getElementById('post-comments-count').textContent = (post.comments || []).length;
+            document.getElementById('post-date').textContent = new Date(post.createdAt).toLocaleDateString('zh-CN');
+            document.getElementById('author-name').textContent = post.author.username;
+
+            // 显示相关链接（如果存在）
+            if (post.links && post.links.length > 0) {
+                const linksContainer = document.createElement('div');
+                linksContainer.className = 'article-links';
+                
+                let linksHTML = '<h4>相关链接</h4><div class="links-container">';
+                
+                post.links.forEach(link => {
+                    try {
+                        const url = new URL(link);
+                        const domain = url.hostname;
+                        linksHTML += `
+                            <a href="${link}" target="_blank" class="article-link">
+                                <span class="link-icon">🔗</span>
+                                <span class="link-text">${domain}</span>
+                            </a>
+                        `;
+                    } catch (e) {
+                        // 如果URL无效，直接显示原始链接
+                        linksHTML += `
+                            <a href="${link}" target="_blank" class="article-link">
+                                <span class="link-icon">🔗</span>
+                                <span class="link-text">${link}</span>
+                            </a>
+                        `;
+                    }
+                });
+                
+                linksHTML += '</div>';
+                linksContainer.innerHTML = linksHTML;
+                
+                // 将链接容器插入到帖子内容之后
+                const postContent = document.getElementById('post-content');
+                postContent.parentNode.insertBefore(linksContainer, postContent.nextSibling);
+            }
+
+            // 生成作者头像
+            const bgColor = getRandomColor();
+            document.getElementById('author-avatar').innerHTML = `
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='${encodeURIComponent(bgColor)}'/><circle cx='50' cy='40' r='10' fill='white'/><path d='M30,70 Q50,85 70,70' fill='white'/></sv...
+            `;
+            
+            // 检查当前用户是否是帖子作者，如果是则显示删除按钮
+            const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
+            if (currentUser.id === post.author.id) {
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.innerHTML = '🗑️ 删除帖子';
+                deleteBtn.onclick = () => handleDeletePost(post.id);
+                document.querySelector('.post-actions').appendChild(deleteBtn);
+            }
+
+            // 加载评论
+            loadComments(post.comments || []);
+
+            // 设置点赞按钮状态
+            updateLikeButton(post);
+        }
+
+        // 处理删除帖子
+        function handleDeletePost(postId) {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                alert('请先登录才能删除帖子');
+                return;
+            }
+            
+            const localStorageData = JSON.parse(localStorage.getItem('posts')) || {};
+            const posts = localStorageData.posts || [];
+            const postIndex = posts.findIndex(p => p.id === postId);
+            
+            if (postIndex === -1) {
+                alert('帖子不存在');
+                return;
+            }
+            
+            const post = posts[postIndex];
+            
+            // 检查当前用户是否是帖子作者
+            if (currentUser.id !== post.author.id) {
+                alert('您只能删除自己发布的帖子');
+                return;
+            }
+            
+            // 确认删除
+            if (!confirm('确定要删除这个帖子吗？此操作不可恢复。')) {
+                return;
+            }
+            
+            // 删除帖子
+            posts.splice(postIndex, 1);
+            localStorage.setItem('posts', JSON.stringify({ posts: posts }));
+            
+            // 显示成功消息
+            alert('帖子删除成功');
+            
+            // 跳转到帖子列表页面
+            window.location.href = 'posts.html';
+        }
+
+        // 加载评论
+        function loadComments(comments) {
+            const commentsList = document.getElementById('comments-list');
+            commentsList.innerHTML = '';
+
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<p class="no-comments">暂无评论</p>';
+                return;
+            }
+
+            comments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment-item';
+                
+                const bgColor = getRandomColor();
+                commentElement.innerHTML = `
+                    <div class="comment-header">
+                        <div class="comment-author">
+                            <div class="user-avatar">
+                                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='${encodeURIComponent(bgColor)}'/><circle cx='50' cy='40' r='10' fill='white'/><path d='M30,70 Q50,85 70,70' fill='white'/></svg>" alt="${comment.author.username}">
+                            </div>
+                            <span>${comment.author.username}</span>
+                        </div>
+                        <span class="comment-date">${new Date(comment.createdAt).toLocaleDateString('zh-CN')}</span>
+                    </div>
+                    <div class="comment-content">${comment.content}</div>
+                `;
+                
+                commentsList.appendChild(commentElement);
+            });
+        }
+
+        // 更新点赞按钮状态
+        function updateLikeButton(post) {
+            const likeBtn = document.getElementById('like-btn');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                likeBtn.disabled = true;
+                likeBtn.title = '请先登录才能点赞';
+                return;
+            }
+
+            // 检查用户是否已经点赞
+            const hasLiked = post.likedBy && post.likedBy.includes(currentUser.id);
+            if (hasLiked) {
+                likeBtn.classList.add('liked');
+                likeBtn.innerHTML = '<i>👍</i> 已点赞';
+            } else {
+                likeBtn.classList.remove('liked');
+                likeBtn.innerHTML = '<i>👍</i> 点赞';
+            }
+        }
+
+        // 处理点赞
+        function handleLike() {
+            const params = getUrlParams();
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            if (!currentUser) {
+                alert('请先登录才能点赞');
+                return;
+            }
+
+            const localStorageData = JSON.parse(localStorage.getItem('posts')) || {};
+            const posts = localStorageData.posts || [];
+            const postIndex = posts.findIndex(p => p.id === params.id);
+            
+            if (postIndex === -1) return;
+
+            const post = posts[postIndex];
+            
+            // 初始化点赞相关字段
+            if (!post.likes) post.likes = 0;
+            if (!post.likedBy) post.likedBy = [];
+
+            const userIndex = post.likedBy.indexOf(currentUser.id);
+            
+            if (userIndex === -1) {
+                // 点赞
+                post.likes += 1;
+                post.likedBy.push(currentUser.id);
+            } else {
+                // 取消点赞
+                post.likes -= 1;
+                post.likedBy.splice(userIndex, 1);
+            }
+
+            // 保存数据
+            localStorage.setItem('posts', JSON.stringify({ posts: posts }));
+            
+            // 更新UI
+            document.getElementById('post-likes').textContent = post.likes;
+            updateLikeButton(post);
+            showNotification(userIndex === -1 ? '点赞成功！' : '已取消点赞', 'success');
+        }
+
+        // 处理评论提交
+        function handleCommentSubmit() {
+            const params = getUrlParams();
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const commentContent = document.getElementById('comment-content').value.trim();
+            
+            if (!currentUser) {
+                alert('请先登录才能评论');
+                return;
+            }
+
+            if (!commentContent) {
+                alert('请输入评论内容');
+                return;
+            }
+
+            const localStorageData = JSON.parse(localStorage.getItem('posts')) || {};
+            const posts = localStorageData.posts || [];
+            const postIndex = posts.findIndex(p => p.id === params.id);
+            
+            if (postIndex === -1) return;
+
+            const post = posts[postIndex];
+            
+            // 初始化评论数组
+            if (!post.comments) post.comments = [];
+
+            // 添加新评论
+            const newComment = {
+                id: Date.now().toString(),
+                content: commentContent,
+                author: {
+                    id: currentUser.id,
+                    username: currentUser.username
+                },
+                createdAt: new Date().toISOString()
+            };
+
+            post.comments.unshift(newComment);
+
+            // 保存数据
+            localStorage.setItem('posts', JSON.stringify({ posts: posts }));
+            
+            // 更新UI
+            document.getElementById('comment-content').value = '';
+            document.getElementById('post-comments-count').textContent = post.comments.length;
+            loadComments(post.comments);
+            showNotification('评论发布成功！', 'success');
+        }
+
+        // 等待DOM加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查用户登录状态并更新导航栏
+            if (typeof checkUserLogin === 'function') {
+                checkUserLogin();
+            } else {
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    updateUILoggedIn();
+                } else {
+                    updateUILoggedOut();
+                }
+            }
+
+            // 加载帖子详情
+            loadPostDetail();
+
+            // 绑定事件
+            document.getElementById('like-btn').addEventListener('click', handleLike);
+            document.getElementById('submit-comment').addEventListener('click', handleCommentSubmit);
+
+            // 为文章链接添加点击事件
+            document.getElementById('articles-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('文章功能即将上线');
+            });
+        });
+    </script>
+</body>
+</html>

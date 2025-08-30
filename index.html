@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏玩家内容发布平台</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/auth.js"></script>
+    <script src="js/post.js"></script>
+    <script src="js/init-mock-data.js"></script>
+    <!-- 引入Font Awesome图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="index.html" style="text-decoration: none; color: #3a3a3a;">🎮 游戏玩家平台</a></h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="active" style="display: flex; align-items: center; gap: 5px; text-decoration: none; color: #4a90e2; font-weight: 600; position: relative; padding: 8px 16px; transition: all 0.3s ease;">
+                    <i class="fas fa-home"></i> 首页
+                    <span style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 30px; height: 3px; background: linear-gradient(90deg, #4a90e2 0%, #50e3c2 100%); border-radius: 3px;"></span>
+                </a>
+                <a href="posts.html" id="posts-link" style="display: flex; align-items: center; gap: 5px; text-decoration: none; color: #333; font-weight: 500; position: relative; padding: 8px 16px; transition: all 0.3s ease;">
+                    <i class="fas fa-comment-alt"></i> 帖子
+                </a>
+                <a href="articles.html" id="articles-link" style="display: flex; align-items: center; gap: 5px; text-decoration: none; color: #333; font-weight: 500; position: relative; padding: 8px 16px; transition: all 0.3s ease;">
+                    <i class="fas fa-book"></i> 文章
+                </a>
+                <a href="create-post.html" id="create-post-btn" class="create-btn" style="display: flex; align-items: center; gap: 5px; text-decoration: none; background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); color: white; padding: 10px 20px; border-radius: 25px; font-weight: 600; transition: all 0.3s ease;">
+                    <i class="fas fa-plus"></i> 发布内容
+                </a>
+                <a href="login.html" id="login-btn" style="display: flex; align-items: center; gap: 5px; text-decoration: none; background: transparent; border: 2px solid #4a90e2; color: #4a90e2; padding: 10px 20px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-right: 10px;">
+                    <i class="fas fa-sign-in-alt"></i> 登录
+                </a>
+                <a href="register.html" id="register-btn" style="display: flex; align-items: center; gap: 5px; text-decoration: none; background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%); color: white; padding: 10px 20px; border-radius: 25px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: none;">
+                    <i class="fas fa-user-plus"></i> 注册
+                </a>
+                <div id="user-profile" class="hidden" style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #e2e8f0; display: flex; align-items: center; justify-content: center; border: 2px solid #4a90e2;">
+                            <img id="navbar-avatar" src="" alt="用户头像" style="width: 100%; height: 100%; object-fit: cover;">
+                            <i class="fas fa-user" style="color: #4a90e2; font-size: 20px;"></i>
+                        </div>
+                        <span id="username-display" style="color: #333; font-weight: 600;"></span>
+                    </div>
+                    <button id="logout-btn" onclick="handleLogout()" style="background: #ef4444; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: none;">
+                        <i class="fas fa-sign-out-alt"></i> 退出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container">
+            <h2>🎯 分享你的游戏体验</h2>
+            <p>连接全球游戏玩家，分享攻略、心得和精彩瞬间，打造属于玩家的内容社区</p>
+            <div class="hero-buttons">
+                <a href="register.html" class="btn-primary">🚀 立即注册</a>
+                <a href="#featured" class="btn-secondary">🔍 浏览内容</a>
+                <a href="create-post.html" class="btn-secondary">📝 开始创作</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 特色内容 -->
+    <section id="featured" class="featured">
+        <div class="container">
+            <h3>🔥 热门内容</h3>
+            <p class="section-subtitle">发现社区中最受欢迎的游戏内容分享</p>
+            <div class="content-grid">
+                <!-- 动态内容将通过 JavaScript 加载 -->
+            </div>
+            <div class="section-footer">
+                <a href="posts.html" class="view-all-btn">查看全部内容 →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 分类导航 -->
+    <section class="categories">
+        <div class="container">
+            <h3>🎮 游戏分类</h3>
+            <p class="section-subtitle">探索不同游戏类型的精彩内容</p>
+            <div class="category-list">
+                <a href="posts.html?category=动作冒险" class="category-item">⚔️ 动作冒险</a>
+                <a href="posts.html?category=角色扮演" class="category-item">🧙‍♂️ 角色扮演</a>
+                <a href="posts.html?category=射击游戏" class="category-item">🔫 射击游戏</a>
+                <a href="posts.html?category=策略游戏" class="category-item">♟️ 策略游戏</a>
+                <a href="posts.html?category=体育竞技" class="category-item">⚽ 体育竞技</a>
+                <a href="posts.html?category=模拟经营" class="category-item">🏢 模拟经营</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h4>🎮 关于我们</h4>
+                    <p>游戏玩家内容发布平台，连接全球游戏爱好者，打造最优质的游戏内容社区</p>
+                </div>
+                <div class="footer-links">
+                    <h4>🔗 快速链接</h4>
+                    <a href="index.html">🏠 首页</a>
+                    <a href="posts.html">📝 帖子</a>
+                    <a href="articles.html">📄 文章</a>
+                    <a href="create-post.html">✨ 发布内容</a>
+                </div>
+                <div class="footer-social">
+                    <h4>📱 关注我们</h4>
+                    <a href="#" class="social-link">📱 微博</a>
+                    <a href="#" class="social-link">💬 微信</a>
+                    <a href="#" class="social-link">🎮 Discord</a>
+                </div>
+                <div class="footer-community">
+                    <h4>👥 社区</h4>
+                    <a href="#" class="social-link">💡 意见反馈</a>
+                    <a href="#" class="social-link">📊 数据统计</a>
+                    <a href="#" class="social-link">📋 使用指南</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025  8 月 30 日 游戏玩家内容发布平台. 保留所有权利. | 为玩家而生，因游戏而聚</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 用户状态管理
+        function updateAuthUI(isLoggedIn) {
+            if (isLoggedIn) {
+                updateUILoggedIn();
+            } else {
+                updateUILoggedOut();
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            updateAuthUI(false);
+        }
+
+        // 检查用户登录状态并初始化事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            updateAuthUI(!!currentUser);
+            initEventListeners();
+            loadFeaturedContent();
+            
+            // 为文章链接添加点击事件
+            document.getElementById('articles-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'articles.html';
+            });
+        });
+    </script>
+</body>
+</html>
